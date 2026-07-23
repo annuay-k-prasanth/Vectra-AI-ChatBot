@@ -1,0 +1,120 @@
+/* ==========================================================
+   TABLETS
+========================================================== */
+
+@media (max-width: 1024px) {
+
+  .sidebar {
+    width: 250px;
+  }
+
+  .chat__messages,
+  .chat__input-bar {
+    max-width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .message {
+    max-width: 90%;
+  }
+}
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+  .chat__topbar {
+    display: flex;
+    align-items: center;
+    height: var(--topbar-height);
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+
+    width: 280px;
+
+    z-index: 1000;
+
+    transform: translateX(-100%);
+    transition: transform var(--transition);
+  }
+
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .chat__messages {
+    padding: 20px 16px;
+  }
+
+  .chat__input-bar {
+    padding: 16px;
+  }
+
+  .message {
+    max-width: 100%;
+  }
+
+  .message__bubble {
+    font-size: 14px;
+  }
+
+  .thread-menu {
+    right: 0;
+  }
+}
+
+/* ==========================================================
+   SMALL PHONES
+========================================================== */
+
+@media (max-width: 480px) {
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .chat__intro h1 {
+    font-size: 22px;
+  }
+
+  .chat__intro p {
+    font-size: 14px;
+  }
+
+  .chat__input-bar {
+    gap: 8px;
+  }
+
+  .chat__input-bar button {
+    padding: 0 16px;
+  }
+
+  .btn--new {
+    font-size: 13px;
+  }
+
+  .thread-menu {
+    width: 180px;
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

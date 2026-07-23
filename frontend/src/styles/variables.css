@@ -1,0 +1,76 @@
+/* ==========================================================
+   THEME
+========================================================== */
+
+:root {
+  /* ---------- Colors ---------- */
+
+  --bg: #14151a;
+
+  --surface: #1c1e24;
+  --surface-hover: #23262e;
+
+  --border: #2a2d36;
+
+  --text-primary: #ecedee;
+  --text-secondary: #8b8f9c;
+
+  --accent: #6c63ff;
+  --accent-hover: #5b5cff;
+  --accent-soft: rgba(108, 99, 255, 0.14);
+
+  --danger: #e5484d;
+  --danger-hover: #ff5d63;
+
+  --success: #22c55e;
+  --info: #0b84ff;
+
+  /* ---------- Typography ---------- */
+
+  --font-ui:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  --font-mono:
+    "JetBrains Mono",
+    ui-monospace,
+    monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 18px;
+
+  /* ---------- Radius ---------- */
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* ---------- Shadows ---------- */
+
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.25);
+
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  /* ---------- Animation ---------- */
+
+  --transition-fast: 0.15s ease;
+  --transition: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* ---------- Layout ---------- */
+
+  --sidebar-width: 272px;
+
+  --chat-width: 760px;
+
+  --topbar-height: 60px;
+}
