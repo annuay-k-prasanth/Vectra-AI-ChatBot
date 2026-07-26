@@ -519,3 +519,156 @@
 .btn-danger:hover {
   background: var(--danger-hover);
 }
+
+
+.document-chip{
+    width: 100%;
+    max-width: var(--chat-width);
+
+    margin: 0 auto 12px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px 16px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    box-shadow: var(--shadow-sm);
+}
+
+.document-chip-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.document-chip-left svg{
+    color:#ef4444;
+    flex-shrink:0;
+}
+
+.document-chip-left span{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+    color:var(--text-primary);
+
+    font-size:14px;
+}
+
+.document-remove{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:32px;
+    height:32px;
+
+    border:none;
+
+    background:transparent;
+
+    border-radius:8px;
+
+    color:var(--text-secondary);
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.document-remove:hover{
+    background:var(--surface-hover);
+    color:white;
+}
+
+/* Paperclip Button */
+
+.attach-btn {
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0 !important;
+
+    background: #000 !important;
+    border: 1px solid #333;
+
+    border-radius: 12px;
+
+    color: #fff !important;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.attach-btn:hover {
+    background: #1a1a1a !important;
+    border-color: #555;
+}
+
+.attach-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.attach-btn svg {
+    width: 22px;
+    height: 22px;
+
+    color: white;
+    stroke: white;
+}/* Paperclip Button */
+
+.attach-btn {
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0 !important;
+
+    background: #000 !important;
+    border: 1px solid #333;
+
+    border-radius: 12px;
+
+    color: #fff !important;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.attach-btn:hover {
+    background: #1a1a1a !important;
+    border-color: #555;
+}
+
+.attach-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.attach-btn svg {
+    width: 22px;
+    height: 22px;
+
+    color: white;
+    stroke: white;
+}

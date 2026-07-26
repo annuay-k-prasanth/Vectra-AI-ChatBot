@@ -6,10 +6,8 @@ from langgraph.graph.message import add_messages
 
 
 class ChatState(TypedDict):
-
-    messages: Annotated[
-        list[BaseMessage],
-        add_messages
-    ]
+    messages: Annotated[list[BaseMessage], add_messages]
 
     chat_title: NotRequired[str]
+
+    thread_id: NotRequired[str]

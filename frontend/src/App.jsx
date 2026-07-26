@@ -5,11 +5,12 @@ import ConfirmDeleteModal from "./components/ConfirmDeleteModal.jsx";
 import downloadChat from "./utils/downloadChat";
 
 import {
-  listThreads,
-  createThread,
-  getMessages,
-  deleteThread,
-  streamChat,
+    listThreads,
+    createThread,
+    getMessages,
+    deleteThread,
+    streamChat,
+    uploadDocument,
 } from "./api/chatApi.js";
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
   const [toolStatus, setToolStatus] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatBackground, setChatBackground] = useState(null);
+  const [uploadedDocument, setUploadedDocument] = useState(null);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [threadToDelete, setThreadToDelete] = useState(null);
@@ -270,4 +272,37 @@ export default function App() {
       />
     </div>
   );
+
+  const handleUploadDocument = useCallback(
+    async (file) => {
+
+        let threadId = activeThreadId;
+
+        if (!threadId) {
+
+            const thread = await createThread();
+
+            threadId = thread.thread_id;
+
+            setThreads(prev => [thread, ...prev]);
+
+            setActiveThreadId(threadId);
+        }
+
+        try {
+
+            await uploadDocument(threadId, file);
+
+            setUploadedDocument(file.name);
+
+        } catch (err) {
+
+            console.error(err);
+
+            alert("Upload failed.");
+        }
+
+    },
+    [activeThreadId]
+);
 }

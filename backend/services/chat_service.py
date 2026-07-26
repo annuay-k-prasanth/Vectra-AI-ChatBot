@@ -88,10 +88,8 @@ def stream_chat_response(
     response_started = False
 
     for message_chunk, metadata in chatbot.stream(
-        {"messages": [HumanMessage(content=user_message)]},
-        config=config,
-        stream_mode="messages",
-    ):
+        {"messages": [HumanMessage(content=user_message)],
+            "thread_id": thread_id,}, config=config, stream_mode="messages",):
 
         # -------------------------------
         # Ignore non-AI messages

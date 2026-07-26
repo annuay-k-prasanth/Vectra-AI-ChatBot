@@ -210,6 +210,33 @@ body {
   padding: 16px 20px 24px;
 }
 
+.attach-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    outline: none;
+    background: transparent;
+    border-radius: 10px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #bdbdbd;
+    transition: all 0.2s ease;
+}
+
+.attach-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: white;
+}
+
+.attach-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* ==========================================================
    MOBILE MENU
 ========================================================== */

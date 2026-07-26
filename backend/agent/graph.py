@@ -3,11 +3,18 @@ from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage
 from dotenv import load_dotenv
-from langgraph.prebuilt import ToolNode, tools_condition
+from langgraph.prebuilt import tools_condition
+from agent.tool_node import ThreadAwareToolNode
 
 from agent.state import ChatState
 from database.checkpointer import checkpointer
 from tools.tool import tools
+
+from typing import Annotated
+from typing_extensions import TypedDict, NotRequired
+
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
 
 
 load_dotenv()
@@ -54,23 +61,28 @@ llm_with_tools = model.bind_tools(tools)
 # ============================================================
 
 SYSTEM_PROMPT = """
-You are a helpful AI assistant with access to external tools.
+You are an AI assistant with access to several tools.
 
-Tool usage rules:
+Tool usage rules
 
-1. If the user asks for current, latest, or real-time information,
-   use an appropriate available tool.
+1. Use the search tool whenever the user requests current, latest,
+real-time or web information.
 
-2. If the user asks for a current or latest stock price,
-   always use the get_stock_price tool.
+2. Use the stock tool whenever the user asks for a current stock price.
 
-3. Never answer current stock-price questions from your internal knowledge.
+3. Use the calculator tool for mathematical calculations.
 
-4. Use the calculator tool for arithmetic calculations.
+4. If the user asks questions about an uploaded PDF,
+always use the rag_tool.
 
-5. Use the search tool when current web information is required.
+5. When calling rag_tool,
+always include the current thread_id.
 
-6. After receiving a tool result, use that result to answer the user clearly.
+6. Never answer questions about uploaded documents
+using your own knowledge.
+
+7. After receiving the tool output,
+use that context to answer naturally.
 """
 
 
@@ -85,7 +97,16 @@ def chat_node(state: ChatState):
         *state["messages"],
     ]
 
-    response = llm_with_tools.invoke(messages)
+    thread_id = state.get("thread_id")
+
+    response = llm_with_tools.invoke(
+        messages,
+        config={
+            "configurable": {
+                "thread_id": thread_id,
+            }
+        },
+    )
 
     # Temporary debugging
     #print("\n========== MODEL DEBUG ==========")
@@ -107,8 +128,7 @@ def chat_node(state: ChatState):
 # TOOL NODE
 # ============================================================
 
-tool_node = ToolNode(tools)
-
+tool_node = ThreadAwareToolNode(tools)
 
 # ============================================================
 # BUILD GRAPH

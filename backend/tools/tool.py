@@ -4,7 +4,13 @@ import requests
 from dotenv import load_dotenv
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_core.tools import tool
+from typing import Optional
 
+from services.rag_service import (
+    rag_search,
+    thread_has_document,
+    thread_document_metadata,
+)
 
 load_dotenv()
 
@@ -115,6 +121,36 @@ def get_stock_price(symbol: str) -> dict:
         "previous_close": data.get("pc"),
     }
 
+# RAG tool
+
+@tool
+def rag_tool(
+    query: str,
+    thread_id: Optional[str] = None,
+):
+    """
+    Search the uploaded PDF for relevant information.
+    """
+    if not thread_id:
+        return {
+            "error": "Missing thread_id."
+        }
+
+    if not thread_has_document(thread_id):
+        return {
+            "error": "No PDF uploaded for this conversation."
+        }
+
+    result = rag_search(
+        query=query,
+        thread_id=thread_id,
+        k=4,
+    )
+
+    result["document"] = thread_document_metadata(thread_id)
+
+    return result
+
 
 # ============================================================
 # ALL AVAILABLE TOOLS
@@ -124,5 +160,6 @@ tools = [
     search_tool,
     calculator,
     get_stock_price,
+    rag_tool,
 ]
 

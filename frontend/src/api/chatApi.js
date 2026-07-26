@@ -36,6 +36,25 @@ export async function deleteThread(threadId) {
  *   onTitle(title)  - called once if the backend auto-generates a title
  *   onDone(fullText)- called when the stream completes
  */
+
+export async function uploadDocument(threadId, file) {
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  const res = await fetch(
+    `${BASE_URL}/threads/${threadId}/upload`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  if (!res.ok)
+    throw new Error("Upload failed");
+
+  return res.json();
+}
 export async function streamChat(threadId,message,{onToken,onTitle,onToolStart,onToolDone,onDone})
  {  const res = await fetch(`${BASE_URL}/chat/stream`, {
     method: "POST",
