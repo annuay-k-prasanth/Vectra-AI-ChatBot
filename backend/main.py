@@ -1,6 +1,7 @@
 import json
+import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -14,18 +15,31 @@ from services.chat_service import (
     save_thread_title,
     stream_chat_response,
 )
+from services.rag_service import ingest_pdf
 
 app = FastAPI(title="Chatbot API")
 
-# Allow the React dev server to call this API.
-# Tighten allow_origins to your real frontend domain in production.
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "ALLOWED_ORIGINS",
+        "http://localhost:3000,http://localhost:5173",
+    ).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 
 class ChatRequest(BaseModel):
@@ -61,6 +75,33 @@ def get_thread_messages(thread_id: str):
 def remove_thread(thread_id: str):
     delete_thread(thread_id)
     return {"deleted": thread_id}
+
+
+@app.post("/threads/{thread_id}/upload")
+async def upload_pdf(thread_id: str, file: UploadFile = File(...)):
+    """Index an uploaded PDF in the selected conversation's vector store."""
+    filename = file.filename or "upload.pdf"
+    is_pdf = file.content_type == "application/pdf" or filename.lower().endswith(".pdf")
+    if not is_pdf:
+        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
+
+    file_bytes = await file.read()
+    if not file_bytes:
+        raise HTTPException(status_code=400, detail="The uploaded file is empty.")
+
+    try:
+        result = ingest_pdf(
+            file_bytes=file_bytes,
+            thread_id=thread_id,
+            filename=filename,
+        )
+        print(
+            f"PDF indexed: thread_id={thread_id}, "
+            f"filename={filename}, chunks={result['chunks']}"
+        )
+        return result
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Could not process PDF: {exc}") from exc
 
 
 @app.post("/chat/stream")

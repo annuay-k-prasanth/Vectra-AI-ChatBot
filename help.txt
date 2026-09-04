@@ -1,1 +1,3 @@
+cd frontend
+first time - npm install
 for run in local - npm run dev (react)

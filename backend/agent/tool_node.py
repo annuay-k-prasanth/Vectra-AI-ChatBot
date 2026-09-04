@@ -12,7 +12,11 @@ class ThreadAwareToolNode(ToolNode):
 
         state = deepcopy(state)
 
+        # The thread ID is part of the graph state for a new turn, but on a
+        # resumed checkpoint it is safest to fall back to the LangGraph config.
         thread_id = state.get("thread_id")
+        if not thread_id and config:
+            thread_id = config.get("configurable", {}).get("thread_id")
 
         messages = state.get("messages", [])
 

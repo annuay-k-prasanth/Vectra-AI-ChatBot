@@ -9,6 +9,7 @@ from agent.tool_node import ThreadAwareToolNode
 from agent.state import ChatState
 from database.checkpointer import checkpointer
 from tools.tool import tools
+from services.rag_service import thread_document_metadata, thread_has_document
 
 from typing import Annotated
 from typing_extensions import TypedDict, NotRequired
@@ -42,10 +43,11 @@ title_model = ChatHuggingFace(llm=title_llm)
 import os
 
 model = ChatGroq(
-    model="llama-3.1-8b-instant",
+    model="openai/gpt-oss-20b",
     api_key=os.getenv("GROQ_API_KEY"),
     temperature=0,
 )
+
 
 
 
@@ -61,7 +63,25 @@ llm_with_tools = model.bind_tools(tools)
 # ============================================================
 
 SYSTEM_PROMPT = """
-You are an AI assistant with access to several tools.
+You are Vectra AI, an AI assistant with access to several tools.
+
+User conversation preferences
+
+- Adapt to the user's stated preferences for the conversation, including the
+  names to use for the user and assistant, tone, style, and context, as long
+  as they are safe.
+- Apply these preferences naturally throughout the current conversation. For
+  example, if a user says to call them Vijay and to use the name Surya for the
+  assistant, address them as Vijay and refer to yourself as Surya.
+- Use Vectra AI as your default name only when the user has not given a
+  different name or conversation preference.
+- If the user asks who you are after assigning you a name, answer using their
+  assigned name, not Vectra AI. For example: "I'm Surya, Vijay."
+
+Identity rules
+
+- Do not describe yourself as the underlying LLM or reveal the model name
+  unless the user explicitly asks about the technical model powering Vectra AI.
 
 Tool usage rules
 
@@ -83,6 +103,21 @@ using your own knowledge.
 
 7. After receiving the tool output,
 use that context to answer naturally.
+
+Document-review response style
+
+When reviewing a resume or another uploaded document, write for a person who
+wants useful, quick feedback:
+- Start with one short, encouraging overall impression.
+- Use the headings "Top improvements" and "What to do next".
+- Under "Top improvements", give at most five numbered, high-impact items.
+  For each: name the section, say what you noticed, then give a concrete fix.
+- Under "What to do next", give three short actions in priority order.
+- Use plain text headings, numbers, and short lines. Do not use Markdown
+  tables, pipes, or long audit-style columns; the chat UI displays plain text.
+- Base every observation on the retrieved document. Do not invent metrics,
+  missing sections, spelling errors, or details that are not in the PDF.
+- Keep the answer concise unless the user asks for a detailed review.
 """
 
 
@@ -92,12 +127,24 @@ use that context to answer naturally.
 
 def chat_node(state: ChatState):
 
+    thread_id = state.get("thread_id")
+    document_context = ""
+
+    if thread_id and thread_has_document(thread_id):
+        document = thread_document_metadata(thread_id)
+        filename = document.get("filename", "the uploaded PDF")
+        document_context = f"""
+
+An uploaded PDF is already indexed for this conversation: {filename}.
+Do not ask the user to upload it again. Treat references to the document,
+PDF, attachment, resume, or its contents as requests about this indexed file,
+and call rag_tool before answering.
+"""
+
     messages = [
-        SystemMessage(content=SYSTEM_PROMPT),
+        SystemMessage(content=SYSTEM_PROMPT + document_context),
         *state["messages"],
     ]
-
-    thread_id = state.get("thread_id")
 
     response = llm_with_tools.invoke(
         messages,

@@ -236,6 +236,31 @@ export default function App() {
     setChatBackground(imageUrl);
   }, []);
 
+  const handleUploadDocument = useCallback(
+    async (file) => {
+      let threadId = activeThreadId;
+
+      if (!threadId) {
+        const thread = await createThread();
+        threadId = thread.thread_id;
+        setThreads((prev) => [thread, ...prev]);
+        setActiveThreadId(threadId);
+      }
+
+      try {
+        await uploadDocument(threadId, file);
+        setUploadedDocument({
+          threadId,
+          filename: file.name,
+        });
+      } catch (err) {
+        console.error(err);
+        alert(`Upload failed: ${err.message}`);
+      }
+    },
+    [activeThreadId]
+  );
+
   return (
     <div className="app">
       <Sidebar
@@ -256,6 +281,12 @@ export default function App() {
         background={chatBackground}
         onSendMessage={handleSendMessage}
         isStreaming={isStreaming}
+        onUploadDocument={handleUploadDocument}
+        uploadedDocument={
+          uploadedDocument?.threadId === activeThreadId
+            ? uploadedDocument.filename
+            : null
+        }
         onToggleSidebar={() =>
           setSidebarOpen((prev) => !prev)
         }
@@ -272,37 +303,4 @@ export default function App() {
       />
     </div>
   );
-
-  const handleUploadDocument = useCallback(
-    async (file) => {
-
-        let threadId = activeThreadId;
-
-        if (!threadId) {
-
-            const thread = await createThread();
-
-            threadId = thread.thread_id;
-
-            setThreads(prev => [thread, ...prev]);
-
-            setActiveThreadId(threadId);
-        }
-
-        try {
-
-            await uploadDocument(threadId, file);
-
-            setUploadedDocument(file.name);
-
-        } catch (err) {
-
-            console.error(err);
-
-            alert("Upload failed.");
-        }
-
-    },
-    [activeThreadId]
-);
 }

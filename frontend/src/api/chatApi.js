@@ -50,8 +50,18 @@ export async function uploadDocument(threadId, file) {
     }
   );
 
-  if (!res.ok)
-    throw new Error("Upload failed");
+  if (!res.ok) {
+    let message = "Upload failed";
+
+    try {
+      const error = await res.json();
+      message = error.detail || message;
+    } catch {
+      // Keep the generic message if the response is not JSON.
+    }
+
+    throw new Error(message);
+  }
 
   return res.json();
 }

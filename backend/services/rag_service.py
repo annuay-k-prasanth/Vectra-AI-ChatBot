@@ -12,10 +12,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-CHROMA_DIR = os.path.join(
-    BASE_DIR,
-    "database",
-    "chroma",
+CHROMA_DIR = os.getenv(
+    "CHROMA_DIR",
+    os.path.join(BASE_DIR, "database", "chroma"),
 )
 
 os.makedirs(CHROMA_DIR, exist_ok=True)

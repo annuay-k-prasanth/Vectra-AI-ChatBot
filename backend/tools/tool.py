@@ -136,7 +136,10 @@ def rag_tool(
             "error": "Missing thread_id."
         }
 
-    if not thread_has_document(thread_id):
+    has_document = thread_has_document(thread_id)
+    print(f"RAG lookup: thread_id={thread_id}, has_document={has_document}")
+
+    if not has_document:
         return {
             "error": "No PDF uploaded for this conversation."
         }

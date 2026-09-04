@@ -1,7 +1,12 @@
 import sqlite3
+import os
 from langgraph.checkpoint.sqlite import SqliteSaver
 
-DB_PATH = "chatbot.db"  # Use the exact same DB path everywhere
+DB_PATH = os.getenv("CHATBOT_DB_PATH", "chatbot.db")
+
+db_directory = os.path.dirname(DB_PATH)
+if db_directory:
+    os.makedirs(db_directory, exist_ok=True)
 
 # check_same_thread=False because FastAPI/Starlette may call this from
 # different threads depending on how requests are handled

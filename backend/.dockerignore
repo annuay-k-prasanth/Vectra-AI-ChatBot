@@ -14,5 +14,7 @@ env/
 
 *.db-wal
 *.db-shm
+*.db
+database/chroma/
 
 .DS_Store

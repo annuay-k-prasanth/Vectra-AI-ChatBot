@@ -14,8 +14,7 @@ langgraph-checkpoint==4.1.1
 langgraph-checkpoint-sqlite==3.1.0
 langgraph-prebuilt==1.1.0
 
-huggingface_hub==1.22.0
-tokenizers==0.23.1
+huggingface_hub>=0.33.4,<1.0
 
 groq==0.37.1
 
@@ -32,11 +31,10 @@ requests==2.34.2
 pydantic==2.13.4
 pydantic-settings==2.14.2
 
-numpy==2.5.1
 pandas==3.0.3
 
 ddgs==9.14.4
 
-chromadb==1.0.15
+chromadb==1.0.20
 sentence-transformers==5.1.0
 pypdf==6.0.0
